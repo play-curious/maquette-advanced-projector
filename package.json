@@ -1,0 +1,85 @@
+{
+  "name": "maquette-advanced-projector",
+  "version": "0.9.0",
+  "description": "A replacement for maquette's projector that is configurable",
+  "module": "./dist/index.js",
+  "main": "./dist/maquette-advanced-projector.cjs.js",
+  "browser": "./dist/maquette-advanced-projector.umd.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "tsa clean && npm -s run dist",
+    "assist": "tsa assist",
+    "release": "tsa release",
+    "fix": "tsa fix",
+    "clean": "tsa clean",
+    "dist": "tsc -p ./src/tsconfig.json",
+    "ci": "tsa ci",
+    "coverage-show": "opn build/coverage/index.html",
+    "precommit": "tsa pre-commit",
+    "prepush": "npm run dist && tsa pre-push",
+    "postcheckout": "tsa post-checkout || exit 0",
+    "postmerge": "tsa post-merge || exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AFASSoftware/maquette-advanced-projector.git"
+  },
+  "keywords": [
+    "maquette"
+  ],
+  "author": "Johan Gorter <johan@johangorter.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AFASSoftware/maquette-advanced-projector/issues"
+  },
+  "homepage": "https://github.com/AFASSoftware/maquette-advanced-projector#readme",
+  "devDependencies": {
+    "maquette": "3.3.4",
+    "typescript-assistant": "0.40.15"
+  },
+  "peerDependencies": {
+    "maquette": "^3.3.4"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "lcov",
+      "html",
+      "text-summary"
+    ],
+    "cache": true,
+    "temp-directory": "./build/nyc/cache",
+    "all": false,
+    "check-coverage": true,
+    "report-dir": "./build/coverage",
+    "es-module": false,
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "watermarks": {
+      "lines": [
+        75,
+        100
+      ],
+      "functions": [
+        75,
+        100
+      ],
+      "branches": [
+        75,
+        100
+      ],
+      "statements": [
+        75,
+        100
+      ]
+    }
+  }
+}
