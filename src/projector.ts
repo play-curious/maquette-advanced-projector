@@ -1,7 +1,10 @@
-import {
-  EventHandlerInterceptor, ProjectorPerformanceLogger, Projection, ProjectionOptions, ProjectorOptions, VNode, VNodeProperties, Projector, dom
-} from 'maquette';
+import { dom, Projection, ProjectionOptions, Projector, VNode, VNodeProperties } from 'maquette';
 import { applyDefaultProjectionOptions } from './utils';
+import { AdvancedProjectorOptions, AllAdvancedProjectorOptions, defaultAdvancedProjectorOptions } from './advanced-projector-options';
+
+export interface AdvancedProjector extends Projector {
+  // No extra API thus far.
+}
 
 let createParentNodePath = (node: Node, rootNode: Element) => {
   let parentNodePath: Node[] = [];
@@ -27,41 +30,9 @@ let findVNodeByParentNodePath = (vnode: VNode, parentNodePath: Node[]): VNode | 
   return result;
 };
 
-let createEventHandlerInterceptor = (
-  projector: Projector,
-  getProjection: () => Projection | undefined,
-  performanceLogger: ProjectorPerformanceLogger
-): EventHandlerInterceptor => {
-  let modifiedEventHandler = function(this: Node, evt: Event) {
-    performanceLogger('domEvent', evt);
-    let projection = getProjection()!;
-    let parentNodePath = createParentNodePath(evt.currentTarget as Element, projection.domNode);
-    parentNodePath.reverse();
-    let matchingVNode = findVNodeByParentNodePath(projection.getLastRender(), parentNodePath);
-
-    projector.scheduleRender();
-
-    let result: any;
-    if (matchingVNode) {
-      /* tslint:disable no-invalid-this */
-      result = matchingVNode.properties![`on${evt.type}`].apply(matchingVNode.properties!.bind || this, arguments);
-      /* tslint:enable no-invalid-this */
-    }
-    performanceLogger('domEventProcessed', evt);
-    return result;
-  };
-  return (propertyName: string, eventHandler: Function, domNode: Node, properties: VNodeProperties) => modifiedEventHandler;
-};
-
-/**
- * Creates a [[Projector]] instance using the provided projectionOptions.
- *
- * For more information, see [[Projector]].
- *
- * @param projectorOptions   Options that influence how the DOM is rendered and updated.
- */
-export let createAdvancedProjector = (projectorOptions?: ProjectorOptions): Projector => {
+export let createAdvancedProjector = (options: AdvancedProjectorOptions): AdvancedProjector => {
   let projector: Projector;
+  let projectorOptions: AllAdvancedProjectorOptions = { ...defaultAdvancedProjectorOptions, ...options };
   let projectionOptions = applyDefaultProjectionOptions(projectorOptions);
   let performanceLogger = projectionOptions.performanceLogger!;
   let renderCompleted = true;
@@ -77,12 +48,30 @@ export let createAdvancedProjector = (projectorOptions?: ProjectorOptions): Proj
     node: Element,
     renderFunction: () => VNode
   ): void => {
-    let projection: Projection | undefined;
-    let getProjection = () => projection;
-    projectionOptions.eventHandlerInterceptor = createEventHandlerInterceptor(projector, getProjection, performanceLogger);
-    projection = domFunction(node, renderFunction(), projectionOptions);
+    let projection!: Projection;
+    projectionOptions.eventHandlerInterceptor = (propertyName: string, eventHandler: Function, domNode: Node, properties: VNodeProperties) => {
+      return function(this: Node, evt: Event) {
+        performanceLogger('domEvent', evt);
+        let parentNodePath = createParentNodePath(evt.currentTarget as Element, projection.domNode);
+        parentNodePath.reverse();
+        let matchingVNode = findVNodeByParentNodePath(projection.getLastRender(), parentNodePath);
+
+        let result: any;
+        if (matchingVNode) {
+          result = projectorOptions.handleInterceptedEvent(projector, matchingVNode, this, evt);
+        }
+        performanceLogger('domEventProcessed', evt);
+        return result;
+      };
+    };
+    projectorOptions.postProcessProjectionOptions?.(projectionOptions);
+    let firstVNode = renderFunction();
+    projection = domFunction(node, firstVNode, projectionOptions);
     projections.push(projection);
     renderFunctions.push(renderFunction);
+    if (projectorOptions.afterFirstVNodeRendered) {
+      projectorOptions.afterFirstVNodeRendered(projection, firstVNode);
+    }
   };
 
   let doRender = () => {
@@ -101,6 +90,10 @@ export let createAdvancedProjector = (projectorOptions?: ProjectorOptions): Proj
     performanceLogger('renderDone', undefined);
     renderCompleted = true;
   };
+
+  if (projectorOptions.modifyDoRenderImplementation) {
+    doRender = projectorOptions.modifyDoRenderImplementation(doRender, projections, renderFunctions);
+  }
 
   projector = {
     renderNow: doRender,
