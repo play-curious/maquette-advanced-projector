@@ -47,7 +47,7 @@
     "typescript-assistant": "0.40.15"
   },
   "peerDependencies": {
-    "maquette": "^3.3.4"
+    "maquette": ">=3.3.4"
   },
   "nyc": {
     "include": [
