@@ -9,5 +9,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run a one-line script
-      run: ./node_modules/.bin/tsa ci
+    - name: typescript-assistant ci
+      run: |
+        npm ci
+        npm run ci
+      env:
+        CI: true
