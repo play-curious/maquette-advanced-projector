@@ -1,6 +1,6 @@
 {
   "name": "maquette-advanced-projector",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A replacement for maquette's projector that is configurable",
   "module": "./dist/index.js",
   "main": "./dist/maquette-advanced-projector.cjs.js",
