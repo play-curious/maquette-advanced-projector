@@ -7,7 +7,7 @@
   "browser": "./dist/maquette-advanced-projector.umd.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsa ci",
     "prepublishOnly": "tsa clean && npm -s run dist",
     "assist": "tsa assist",
     "release": "tsa release",

@@ -257,6 +257,7 @@ describe('Original projector functionality', () => {
         // re-require projector.ts
         delete require.cache[path.normalize(path.join(__dirname, '../src/projector.ts'))];
         let createProjectorImpl = require('../src/projector').createAdvancedProjector;
+        Array.prototype.find = apFind;
         allowsForEventHandlersToBeChanged(createProjectorImpl);
       } finally {
         Array.prototype.find = apFind;
