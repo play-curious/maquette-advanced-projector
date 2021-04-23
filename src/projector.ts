@@ -8,7 +8,7 @@ export interface AdvancedProjector extends Projector {
 
 let createParentNodePath = (node: Node, rootNode: Element) => {
   let parentNodePath: Node[] = [];
-  while (node !== rootNode) {
+  while (node && node !== rootNode) {
     parentNodePath.push(node);
     node = node.parentNode!;
   }
