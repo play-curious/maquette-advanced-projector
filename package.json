@@ -37,13 +37,12 @@
     "@types/sinon": "9.0.4",
     "@types/sinon-chai": "3.2.4",
     "chai-as-promised": "7.1.1",
-    "import-sort-style-module": "6.0.0",
     "jsdom": "16.2.2",
     "jsdom-global": "3.0.2",
     "maquette": "3.3.4",
     "sinon": "9.0.2",
     "sinon-chai": "3.5.0",
-    "typescript-assistant": "0.50.0"
+    "typescript-assistant": "0.50.1"
   },
   "peerDependencies": {
     "maquette": ">=3.3.7"
