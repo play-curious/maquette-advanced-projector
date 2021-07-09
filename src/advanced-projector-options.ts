@@ -1,5 +1,11 @@
-import { Projection, ProjectionOptions, ProjectorOptions, VNode } from 'maquette';
-import { AdvancedProjector } from './projector';
+import {
+  Projection,
+  ProjectionOptions,
+  ProjectorOptions,
+  VNode,
+} from "maquette";
+
+import { AdvancedProjector } from "./projector";
 
 export interface AllAdvancedProjectorOptions extends ProjectorOptions {
   /**
@@ -7,7 +13,12 @@ export interface AllAdvancedProjectorOptions extends ProjectorOptions {
    * The default implementation calls `scheduleRender` and then invokes
    * ```vNode.properties![`on${evt.type}`](evt);```
    */
-  handleInterceptedEvent(projector: AdvancedProjector, matchingVNode: VNode, node: Node, evt: Event): boolean | unknown;
+  handleInterceptedEvent(
+    projector: AdvancedProjector,
+    matchingVNode: VNode,
+    node: Node,
+    evt: Event
+  ): boolean | unknown;
 
   /**
    * Allows making advanced changes to ProjectionOptions that are being used.
@@ -21,7 +32,11 @@ export interface AllAdvancedProjectorOptions extends ProjectorOptions {
    * @param projections The list of projections that will be populated later.
    * @param renderFunctions The list of renderFunctions that will be populated later. Indices match with the projections array.
    */
-  modifyDoRenderImplementation?(doRender: () => void, projections: Projection[], renderFunctions: (() => VNode)[]): () => void;
+  modifyDoRenderImplementation?(
+    doRender: () => void,
+    projections: Projection[],
+    renderFunctions: (() => VNode)[]
+  ): () => void;
 
   /**
    * Allows executing code for the vnode that was rendered when the projection was first created. (useful combined with modifyDoRenderImplementation)
@@ -32,10 +47,18 @@ export interface AllAdvancedProjectorOptions extends ProjectorOptions {
 export type AdvancedProjectorOptions = Partial<AllAdvancedProjectorOptions>;
 
 export const defaultAdvancedProjectorOptions: AllAdvancedProjectorOptions = {
-  handleInterceptedEvent: (projector: AdvancedProjector, vNode: VNode, node: Node, evt: Event) => {
+  handleInterceptedEvent: (
+    projector: AdvancedProjector,
+    vNode: VNode,
+    node: Node,
+    evt: Event
+  ) => {
     projector.scheduleRender();
     /* tslint:disable no-invalid-this */
-    return vNode.properties![`on${evt.type}`].apply(vNode.properties!.bind || node, [evt]);
+    return vNode.properties![`on${evt.type}`].apply(
+      vNode.properties!.bind || node,
+      [evt]
+    );
     /* tslint:enable no-invalid-this */
-  }
+  },
 };

@@ -1,6 +1,18 @@
-import { dom, Projection, ProjectionOptions, Projector, VNode, VNodeProperties } from 'maquette';
-import { applyDefaultProjectionOptions } from './utils';
-import { AdvancedProjectorOptions, AllAdvancedProjectorOptions, defaultAdvancedProjectorOptions } from './advanced-projector-options';
+import {
+  Projection,
+  ProjectionOptions,
+  Projector,
+  VNode,
+  VNodeProperties,
+  dom,
+} from "maquette";
+
+import {
+  AdvancedProjectorOptions,
+  AllAdvancedProjectorOptions,
+  defaultAdvancedProjectorOptions,
+} from "./advanced-projector-options";
+import { applyDefaultProjectionOptions } from "./utils";
 
 export interface AdvancedProjector extends Projector {
   // No extra API thus far.
@@ -16,23 +28,34 @@ let createParentNodePath = (node: Node, rootNode: Element) => {
 };
 
 let find: <T>(items: T[], predicate: (item: T) => boolean) => T | undefined;
-if (Array.prototype.find) {
+if ((Array.prototype as any).find) {
   find = (items, predicate) => items.find(predicate);
 } else {
   find = (items, predicate) => items.filter(predicate)[0];
 }
 
-let findVNodeByParentNodePath = (vnode: VNode, parentNodePath: Node[]): VNode | undefined => {
+let findVNodeByParentNodePath = (
+  vnode: VNode,
+  parentNodePath: Node[]
+): VNode | undefined => {
   let result: VNode | undefined = vnode;
-  parentNodePath.forEach(node => {
-    result = (result && result.children) ? find(result.children, child => child.domNode === node) : undefined;
+  parentNodePath.forEach((node) => {
+    result =
+      result && result.children
+        ? find(result.children, (child) => child.domNode === node)
+        : undefined;
   });
   return result;
 };
 
-export let createAdvancedProjector = (options: AdvancedProjectorOptions): AdvancedProjector => {
+export let createAdvancedProjector = (
+  options: AdvancedProjectorOptions
+): AdvancedProjector => {
   let projector: Projector;
-  let projectorOptions: AllAdvancedProjectorOptions = { ...defaultAdvancedProjectorOptions, ...options };
+  let projectorOptions: AllAdvancedProjectorOptions = {
+    ...defaultAdvancedProjectorOptions,
+    ...options,
+  };
   let projectionOptions = applyDefaultProjectionOptions(projectorOptions);
   let performanceLogger = projectionOptions.performanceLogger!;
   let renderCompleted = true;
@@ -43,24 +66,44 @@ export let createAdvancedProjector = (options: AdvancedProjectorOptions): Advanc
 
   let addProjection = (
     /* one of: dom.append, dom.insertBefore, dom.replace, dom.merge */
-    domFunction: (node: Element, vnode: VNode, projectionOptions: ProjectionOptions) => Projection,
+    domFunction: (
+      node: Element,
+      vnode: VNode,
+      projectionOptions: ProjectionOptions
+    ) => Projection,
     /* the parameter of the domFunction */
     node: Element,
     renderFunction: () => VNode
   ): void => {
     let projection!: Projection;
-    projectionOptions.eventHandlerInterceptor = (propertyName: string, eventHandler: Function, domNode: Node, properties: VNodeProperties) => {
-      return function(this: Node, evt: Event) {
-        performanceLogger('domEvent', evt);
-        let parentNodePath = createParentNodePath(evt.currentTarget as Element, projection.domNode);
+    projectionOptions.eventHandlerInterceptor = (
+      propertyName: string,
+      eventHandler: Function,
+      domNode: Node,
+      properties: VNodeProperties
+    ) => {
+      return function (this: Node, evt: Event) {
+        performanceLogger("domEvent", evt);
+        let parentNodePath = createParentNodePath(
+          evt.currentTarget as Element,
+          projection.domNode
+        );
         parentNodePath.reverse();
-        let matchingVNode = findVNodeByParentNodePath(projection.getLastRender(), parentNodePath);
+        let matchingVNode = findVNodeByParentNodePath(
+          projection.getLastRender(),
+          parentNodePath
+        );
 
         let result: any;
         if (matchingVNode) {
-          result = projectorOptions.handleInterceptedEvent(projector, matchingVNode, this, evt);
+          result = projectorOptions.handleInterceptedEvent(
+            projector,
+            matchingVNode,
+            this,
+            evt
+          );
         }
-        performanceLogger('domEventProcessed', evt);
+        performanceLogger("domEventProcessed", evt);
         return result;
       };
     };
@@ -80,19 +123,23 @@ export let createAdvancedProjector = (options: AdvancedProjectorOptions): Advanc
       return; // The last render threw an error, it should have been logged in the browser console.
     }
     renderCompleted = false;
-    performanceLogger('renderStart', undefined);
+    performanceLogger("renderStart", undefined);
     for (let i = 0; i < projections.length; i++) {
       let updatedVnode = renderFunctions[i]();
-      performanceLogger('rendered', undefined);
+      performanceLogger("rendered", undefined);
       projections[i].update(updatedVnode);
-      performanceLogger('patched', undefined);
+      performanceLogger("patched", undefined);
     }
-    performanceLogger('renderDone', undefined);
+    performanceLogger("renderDone", undefined);
     renderCompleted = true;
   };
 
   if (projectorOptions.modifyDoRenderImplementation) {
-    doRender = projectorOptions.modifyDoRenderImplementation(doRender, projections, renderFunctions);
+    doRender = projectorOptions.modifyDoRenderImplementation(
+      doRender,
+      projections,
+      renderFunctions
+    );
   }
 
   projector = {
@@ -139,9 +186,8 @@ export let createAdvancedProjector = (options: AdvancedProjectorOptions): Advanc
           return projections.splice(i, 1)[0];
         }
       }
-      throw new Error('renderFunction was not found');
-    }
-
+      throw new Error("renderFunction was not found");
+    },
   };
   return projector;
 };
