@@ -1,6 +1,7 @@
 import * as path from "path";
 
 import { MaquetteComponent, Projector, h } from "maquette";
+import { SinonStub } from "sinon";
 
 import { createAdvancedProjector } from "../src/projector";
 import { expect, sinon } from "./test-utilities";
@@ -92,7 +93,7 @@ describe("Original projector functionality", () => {
     projector.scheduleRender();
     expect(renderFunction).to.have.been.calledThrice;
     expect(global.requestAnimationFrame).to.have.been.calledOnce;
-    global.requestAnimationFrame.callArg(0);
+    (global.requestAnimationFrame as SinonStub).callArg(0);
     expect(renderFunction).to.have.callCount(6);
   });
 
@@ -100,7 +101,7 @@ describe("Original projector functionality", () => {
     let projector = createAdvancedProjector({});
     projector.scheduleRender();
     expect(global.requestAnimationFrame).to.have.been.calledOnce;
-    global.requestAnimationFrame.callArg(0);
+    (global.requestAnimationFrame as SinonStub).callArg(0);
 
     // Stop
     projector.stop();
@@ -110,7 +111,7 @@ describe("Original projector functionality", () => {
     // Resume
     projector.resume();
     expect(global.requestAnimationFrame).to.have.been.calledTwice;
-    global.requestAnimationFrame.callArg(0);
+    (global.requestAnimationFrame as SinonStub).callArg(0);
 
     // Stopping before rendering
     projector.scheduleRender();
@@ -127,20 +128,20 @@ describe("Original projector functionality", () => {
     renderFunction.throws("Rendering error");
     projector.scheduleRender();
     expect(() => {
-      global.requestAnimationFrame.callArg(0);
+      (global.requestAnimationFrame as SinonStub).callArg(0);
     }).to.throw(Error);
 
-    global.requestAnimationFrame.callArg(0);
+    (global.requestAnimationFrame as SinonStub).callArg(0);
 
     renderFunction.resetHistory();
     projector.scheduleRender();
-    global.requestAnimationFrame.callArg(0);
+    (global.requestAnimationFrame as SinonStub).callArg(0);
     expect(renderFunction).not.to.be.called;
 
-    global.requestAnimationFrame.resetHistory();
+    (global.requestAnimationFrame as SinonStub).resetHistory();
     renderFunction.returns(h("div"));
     projector.resume();
-    global.requestAnimationFrame.callArg(0);
+    (global.requestAnimationFrame as SinonStub).callArg(0);
     expect(renderFunction).to.be.calledOnce;
   });
 

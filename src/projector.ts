@@ -28,7 +28,7 @@ let createParentNodePath = (node: Node, rootNode: Element) => {
 };
 
 let find: <T>(items: T[], predicate: (item: T) => boolean) => T | undefined;
-if (Array.prototype.find) {
+if ((Array.prototype as any).find) {
   find = (items, predicate) => items.find(predicate);
 } else {
   find = (items, predicate) => items.filter(predicate)[0];
