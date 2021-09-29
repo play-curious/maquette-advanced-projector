@@ -8,6 +8,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "tsa ci",
+    "prepare": "npm run fix:hooks",
     "prepublishOnly": "tsa clean && npm -s run dist",
     "assist": "tsa assist",
     "release": "tsa release",
@@ -16,7 +17,8 @@
     "clean": "tsa clean",
     "dist": "tsc -p ./src/tsconfig.json",
     "ci": "tsa ci",
-    "coverage-show": "opn build/coverage/index.html"
+    "coverage-show": "opn build/coverage/index.html",
+    "fix:hooks": "husky install"
   },
   "repository": {
     "type": "git",
@@ -33,8 +35,8 @@
   "homepage": "https://github.com/AFASSoftware/maquette-advanced-projector#readme",
   "devDependencies": {
     "@types/chai-as-promised": "7.1.4",
-    "@types/node": "16.9.6",
-    "@types/sinon": "10.0.3",
+    "@types/node": "16.10.1",
+    "@types/sinon": "10.0.4",
     "@types/sinon-chai": "3.2.5",
     "chai-as-promised": "7.1.1",
     "jsdom": "17.0.0",
@@ -42,7 +44,7 @@
     "maquette": "3.5.1",
     "sinon": "11.1.2",
     "sinon-chai": "3.7.0",
-    "typescript-assistant": "^0.51.0"
+    "typescript-assistant": "0.53.0"
   },
   "peerDependencies": {
     "maquette": ">=3.3.7"
@@ -86,14 +88,6 @@
         75,
         100
       ]
-    }
-  },
-  "husky": {
-    "hooks": {
-      "post-checkout": "tsa post-checkout || exit 0",
-      "post-merge": "tsa post-merge || exit 0",
-      "pre-commit": "tsa pre-commit",
-      "pre-push": "npm run dist && tsa pre-push"
     }
   },
   "importSort": {
