@@ -34,17 +34,17 @@
   },
   "homepage": "https://github.com/AFASSoftware/maquette-advanced-projector#readme",
   "devDependencies": {
-    "@types/chai-as-promised": "7.1.4",
-    "@types/node": "16.11.6",
-    "@types/sinon": "10.0.6",
-    "@types/sinon-chai": "3.2.5",
+    "@types/chai-as-promised": "7.1.5",
+    "@types/node": "17.0.23",
+    "@types/sinon": "10.0.11",
+    "@types/sinon-chai": "3.2.8",
     "chai-as-promised": "7.1.1",
-    "jsdom": "18.0.0",
+    "jsdom": "19.0.0",
     "jsdom-global": "3.0.2",
-    "maquette": "3.5.1",
-    "sinon": "11.1.2",
+    "maquette": "3.5.2",
+    "sinon": "13.0.1",
     "sinon-chai": "3.7.0",
-    "typescript-assistant": "0.53.1"
+    "typescript-assistant": "0.55.8"
   },
   "peerDependencies": {
     "maquette": ">=3.5.1"
