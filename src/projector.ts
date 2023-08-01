@@ -110,6 +110,7 @@ export let createAdvancedProjector = (
     projectorOptions.postProcessProjectionOptions?.(projectionOptions);
     let firstVNode = renderFunction();
     projection = domFunction(node, firstVNode, projectionOptions);
+    projectionOptions.eventHandlerInterceptor = undefined;
     projections.push(projection);
     renderFunctions.push(renderFunction);
     if (projectorOptions.afterFirstVNodeRendered) {
