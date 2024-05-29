@@ -1,6 +1,6 @@
 {
   "name": "maquette-advanced-projector",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A replacement for maquette's projector that is configurable",
   "module": "./dist/index.js",
   "main": "./dist/maquette-advanced-projector.cjs.js",
@@ -15,7 +15,7 @@
     "fix": "tsa fix",
     "fixall": "tsa fixall",
     "clean": "tsa clean",
-    "dist": "tsc -p ./src/tsconfig.json",
+    "dist": "tsc -p ./src/tsconfig.json && rollup -c --bundleConfigAsCjs && uglifyjs ./dist/maquette-advanced-projector.umd.js -c unsafe=true,unsafe_comps=true,unsafe_math=true,passes=3 -m -o ./dist/maquette-advanced-projector.umd.min.js",
     "ci": "tsa ci",
     "coverage-show": "opn build/coverage/index.html",
     "fix:hooks": "husky install"
@@ -42,6 +42,7 @@
     "jsdom": "22.1.0",
     "jsdom-global": "3.0.2",
     "maquette": "3.6.0",
+    "rollup": "3.20.2",
     "sinon": "15.2.0",
     "sinon-chai": "3.7.0",
     "typescript-assistant": "^0.63.4"
